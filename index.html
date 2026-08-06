@@ -1,111 +1,134 @@
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
-                            <input type="checkbox" value="FOMO Entry" class="mistake-cb rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span>FOMO Entry</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
-                            <input type="checkbox" value="Ignored Signals" class="mistake-cb rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span>Ignored Signals</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
-                            <input type="checkbox" value="No Clear Plan" class="mistake-cb rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span>No Clear Plan</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
-                            <input type="checkbox" value="Ignored Stop Loss" class="mistake-cb rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span>Ignored Stop Loss</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/50 cursor-pointer">
-                            <input type="checkbox" value="No Mistakes" checked class="mistake-cb rounded bg-slate-800 border-slate-700 text-emerald-500">
-                            <span class="text-rose-300 font-bold">No Mistakes</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
-                            <input type="checkbox" value="Greed" class="mistake-cb rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span>Greed</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
-                            <input type="checkbox" value="Against Trend" class="mistake-cb rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span>Against Trend</span>
-                        </label>
-                    </div>
-                </div>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Diary Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #070a13; color: #f1f5f9; padding: 15px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
+        .logo { font-size: 20px; font-weight: bold; color: #fff; }
+        .logo span { color: #6366f1; }
+        .btn-primary { background-color: #6366f1; color: white; padding: 10px 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-primary:hover { background-color: #4f46e5; }
+        
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .kpi-card { background-color: #0f1424; border: 1px solid #1e293b; padding: 15px; border-radius: 14px; }
+        .kpi-title { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 600; }
+        .kpi-value { font-size: 20px; font-weight: bold; margin-top: 5px; }
+        .text-green { color: #10b981; }
+        .text-red { color: #f43f5e; }
+        .text-indigo { color: #818cf8; }
 
-                <div>
-                    <label class="text-xs font-bold text-slate-300 block mb-1">Lessons Learned</label>
-                    <textarea id="lessonsText" rows="2" placeholder="What did you learn from this trade?" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
-                </div>
+        .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media(min-width: 768px) { .main-grid { grid-template-columns: 2fr 1fr; } }
 
-                <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
-                    <button onclick="closeLogModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
-                        Reset
-                    </button>
-                    <button onclick="saveTradeSuccess()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg shadow-indigo-600/30">
-                        Save Trade
-                    </button>
-                </div>
-            </div>
+        .card { background-color: #0f1424; border: 1px solid #1e293b; padding: 18px; border-radius: 16px; margin-bottom: 20px; }
+        .card-title { font-size: 15px; font-weight: bold; color: #fff; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
 
+        /* Checklist Styles */
+        .checklist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .check-item { background: #182035; border: 1px solid #283553; padding: 10px; border-radius: 10px; font-size: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #cbd5e1; }
+        .check-item input { accent-color: #6366f1; width: 16px; height: 16px; }
+        
+        textarea { width: 100%; background: #182035; border: 1px solid #283553; color: white; padding: 10px; border-radius: 10px; font-size: 12px; outline: none; margin-bottom: 15px; }
+
+        /* Modal Overlay */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 999; padding: 15px; }
+        .modal-content { background: #0f1424; border: 1px solid #334155; border-radius: 20px; max-width: 450px; width: 100%; padding: 25px; text-align: center; }
+        .success-icon { width: 50px; height: 50px; background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">Trade <span>Diary Pro</span></div>
+        <button class="btn-primary" onclick="openModal()">+ Log Trade</button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">Today's P&L</div>
+            <div class="kpi-value text-green">+₹11,228.60</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Yesterday's P&L</div>
+            <div class="kpi-value" style="color:#cbd5e1;">+₹2,408.90</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Cost of Mistakes</div>
+            <div class="kpi-value text-red">-₹11,249.00</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">P/C Ratio Net</div>
+            <div class="kpi-value text-indigo">0.82</div>
         </div>
     </div>
 
-    <!-- SUCCESS NOTIFICATION POPUP -->
-    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#0f1424] border border-indigo-500/50 rounded-2xl max-w-md w-full p-8 text-center shadow-2xl relative">
-            <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 border border-emerald-500/40">
-                <i data-lucide="check" class="w-8 h-8"></i>
+    <!-- Main Workspace -->
+    <div class="main-grid">
+        <!-- Equity Chart -->
+        <div class="card">
+            <div class="card-title">Equity Curve (Cumulative P&L)</div>
+            <div style="height: 220px;">
+                <canvas id="equityChart"></canvas>
             </div>
+        </div>
+
+        <!-- Inline Quick Psychology Log -->
+        <div class="card">
+            <div class="card-title">Psychology & Mistakes</div>
+            <div class="checklist-grid">
+                <label class="check-item"><input type="checkbox"> Overtrading</label>
+                <label class="check-item"><input type="checkbox"> Revenge Trading</label>
+                <label class="check-item"><input type="checkbox"> Risked Too Much</label>
+                <label class="check-item"><input type="checkbox"> Exited Too Early</label>
+                <label class="check-item"><input type="checkbox"> Exited Too Late</label>
+                <label class="check-item"><input type="checkbox"> FOMO Entry</label>
+                <label class="check-item"><input type="checkbox"> Ignored Stop Loss</label>
+                <label class="check-item" style="border-color:#10b981; color:#10b981;"><input type="checkbox" checked> No Mistakes</label>
+            </div>
+            <textarea rows="2" placeholder="What did you learn from this trade?"></textarea>
+            <button class="btn-primary" style="width: 100%;" onclick="showSuccess()">Save Trade Psychology</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">✓</div>
+            <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">Trade Saved Successfully!</h2>
+            <p style="font-size: 12px; color: #94a3b8; font-style: italic; margin-bottom: 20px;">"Pain is information. Capture it, study it, grow from it."</p>
             
-            <h2 class="text-2xl font-extrabold text-white mb-1">Trade Saved Successfully!</h2>
-            <p class="text-xs text-slate-400 italic mb-6">"Pain is information. Capture it, study it, grow from it."</p>
-
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 mb-6 text-left">
-                <p class="text-xs text-slate-400 font-semibold mb-3">Comparison with Previous Day's P&L</p>
-                <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div class="bg-[#0f1424] p-3 rounded-xl border border-slate-800">
-                        <span class="text-[10px] text-slate-400 block">Today's P&L</span>
-                        <span class="text-base font-bold text-emerald-400">+11,228.60</span>
-                    </div>
-                    <div class="bg-[#0f1424] p-3 rounded-xl border border-slate-800">
-                        <span class="text-[10px] text-slate-400 block">Yesterday's P&L</span>
-                        <span class="text-base font-bold text-emerald-400">+2,408.90</span>
-                    </div>
+            <div style="background: #182035; padding: 15px; border-radius: 12px; text-align: left; margin-bottom: 20px; font-size: 12px;">
+                <div style="color: #94a3b8; margin-bottom: 8px; font-weight: 600;">Comparison with Previous Day's P&L</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <div>Today's P&L: <strong class="text-green">+11,228.60</strong></div>
+                    <div>Yesterday: <strong class="text-green">+2,408.90</strong></div>
                 </div>
-                <div class="flex items-center text-xs text-indigo-300">
-                    <i data-lucide="arrow-up" class="w-4 h-4 mr-1 text-emerald-400"></i>
-                    <span>You saw an increase of <strong>8,819.70</strong> in your pnl compared to the last session!</span>
-                </div>
+                <div style="color: #818cf8;">↑ You saw an increase of <strong>8,819.70</strong> compared to last session!</div>
             </div>
 
-            <button onclick="document.getElementById('successModal').classList.add('hidden')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/30">
-                Keep Journaling
-            </button>
+            <button class="btn-primary" style="width: 100%;" onclick="closeModal()">Keep Journaling</button>
         </div>
     </div>
 
     <script>
+        function showSuccess() {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+        function openModal() {
+            showSuccess();
+        }
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
         window.onload = function() {
-            lucide.createIcons();
-            initChart();
-        };
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-        }
-
-        function openLogModal() {
-            document.getElementById('logModal').classList.remove('hidden');
-        }
-
-        function closeLogModal() {
-            document.getElementById('logModal').classList.add('hidden');
-        }
-
-        function saveTradeSuccess() {
-            closeLogModal();
-            document.getElementById('successModal').classList.remove('hidden');
-        }
-
-        function initChart() {
             const ctx = document.getElementById('equityChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
@@ -115,7 +138,7 @@
                         label: 'P&L (₹)',
                         data: [2400, 3100, 3100, 3100, 2408, 11228, 11228],
                         borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
                         fill: true,
                         tension: 0.3
                     }]
@@ -130,7 +153,7 @@
                     }
                 }
             });
-        }
+        };
     </script>
 </body>
 </html>
