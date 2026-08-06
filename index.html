@@ -3,157 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Diary Pro</title>
+    <title>Trade Diary - Advanced Trading Journal</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg-dark: #060913;
+            --card-bg: #0d1222;
+            --card-border: #1a233a;
+            --accent-blue: #2563eb;
+            --accent-purple: #6366f1;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --green: #10b981;
+            --red: #f43f5e;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #070a13; color: #f1f5f9; padding: 15px; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
-        .logo { font-size: 20px; font-weight: bold; color: #fff; }
-        .logo span { color: #6366f1; }
-        .btn-primary { background-color: #6366f1; color: white; padding: 10px 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .btn-primary:hover { background-color: #4f46e5; }
-        
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-        .kpi-card { background-color: #0f1424; border: 1px solid #1e293b; padding: 15px; border-radius: 14px; }
-        .kpi-title { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 600; }
-        .kpi-value { font-size: 20px; font-weight: bold; margin-top: 5px; }
-        .text-green { color: #10b981; }
-        .text-red { color: #f43f5e; }
-        .text-indigo { color: #818cf8; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 16px; }
 
-        .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media(min-width: 768px) { .main-grid { grid-template-columns: 2fr 1fr; } }
+        .app-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-b: 1px solid var(--card-border); margin-bottom: 20px; }
+        .logo { font-size: 20px; font-weight: 800; }
+        .logo span { color: var(--accent-purple); }
 
-        .card { background-color: #0f1424; border: 1px solid #1e293b; padding: 18px; border-radius: 16px; margin-bottom: 20px; }
-        .card-title { font-size: 15px; font-weight: bold; color: #fff; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media(min-width: 900px) { .grid-2 { grid-template-columns: 320px 1fr; } }
 
-        /* Checklist Styles */
-        .checklist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .check-item { background: #182035; border: 1px solid #283553; padding: 10px; border-radius: 10px; font-size: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #cbd5e1; }
-        .check-item input { accent-color: #6366f1; width: 16px; height: 16px; }
-        
-        textarea { width: 100%; background: #182035; border: 1px solid #283553; color: white; padding: 10px; border-radius: 10px; font-size: 12px; outline: none; margin-bottom: 15px; }
+        .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+        .card-header { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* Modal Overlay */
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 999; padding: 15px; }
-        .modal-content { background: #0f1424; border: 1px solid #334155; border-radius: 20px; max-width: 450px; width: 100%; padding: 25px; text-align: center; }
-        .success-icon { width: 50px; height: 50px; background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 24px; font-weight: bold; }
+        /* Toggles & Tabs */
+        .toggle-group { display: flex; background: #080c18; padding: 4px; border-radius: 12px; border: 1px solid var(--card-border); margin-bottom: 16px; }
+        .toggle-btn { flex: 1; padding: 8px; border: none; background: transparent; color: var(--text-sub); font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .toggle-btn.active { background: var(--accent-purple); color: #fff; }
+
+        /* Form Controls */
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; font-weight: 600; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; background: #070a16; border: 1px solid var(--card-border); color: #fff;
+            padding: 10px 12px; border-radius: 10px; font-size: 13px; outline: none;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent-purple); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Custom Rules Tag Selector */
+        .rules-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+        .rule-tag { background: #151d33; border: 1px solid #283658; color: #cbd5e1; font-size: 11px; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+        .rule-tag span { cursor: pointer; font-weight: bold; color: var(--red); }
+
+        /* Checklist */
+        .checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+        .check-card { background: #080c18; border: 1px solid var(--card-border); padding: 8px 10px; border-radius: 8px; font-size: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .check-card input { accent-color: var(--accent-purple); }
+
+        .btn-submit { width: 100%; background: var(--accent-purple); color: white; padding: 12px; border: none; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* Drag & Drop Box */
+        .upload-box { border: 2px dashed var(--card-border); border-radius: 12px; padding: 20px; text-align: center; color: var(--text-sub); font-size: 12px; background: #070a16; cursor: pointer; }
+
+        /* Modal Popup */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 99; justify-content: center; align-items: center; padding: 16px; }
+        .modal-card { background: var(--card-bg); border: 1px solid var(--card-border); width: 100%; max-width: 440px; border-radius: 20px; padding: 24px; text-align: center; }
+        .success-badge { width: 48px; height: 48px; background: rgba(16,185,129,0.15); border: 1px solid var(--green); color: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 22px; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { padding: 12px; background: #080c18; color: var(--text-sub); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--card-border); }
+        td { padding: 12px; border-bottom: 1px solid var(--card-border); }
     </style>
 </head>
 <body>
 
     <!-- Header -->
-    <div class="header">
-        <div class="logo">Trade <span>Diary Pro</span></div>
-        <button class="btn-primary" onclick="openModal()">+ Log Trade</button>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="kpi-title">Today's P&L</div>
-            <div class="kpi-value text-green">+₹11,228.60</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-title">Yesterday's P&L</div>
-            <div class="kpi-value" style="color:#cbd5e1;">+₹2,408.90</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-title">Cost of Mistakes</div>
-            <div class="kpi-value text-red">-₹11,249.00</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-title">P/C Ratio Net</div>
-            <div class="kpi-value text-indigo">0.82</div>
-        </div>
+    <div class="app-header">
+        <div class="logo">Trade <span>Diary</span></div>
+        <div style="font-size: 12px; color: var(--text-sub);">Personal Trading Workspace</div>
     </div>
 
     <!-- Main Workspace -->
-    <div class="main-grid">
-        <!-- Equity Chart -->
-        <div class="card">
-            <div class="card-title">Equity Curve (Cumulative P&L)</div>
-            <div style="height: 220px;">
-                <canvas id="equityChart"></canvas>
+    <div class="grid-2">
+        
+        <!-- Left Column: Trade Journal Entry Form -->
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    <span>Trade Journal</span>
+                    <label style="font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="noTradeDay"> No Trade Day
+                    </label>
+                </div>
+
+                <form id="tradeForm" onsubmit="handleFormSubmit(event)">
+                    <!-- Intraday / Swing Toggle -->
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" onclick="setTradeMode('Intraday', this)">Intraday</button>
+                        <button type="button" class="toggle-btn" onclick="setTradeMode('Swing', this)">Swing</button>
+                    </div>
+
+                    <!-- Long / Short Toggle -->
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" style="color: var(--green);" onclick="setDirection('Long', this)">▲ Long</button>
+                        <button type="button" class="toggle-btn" style="color: var(--red);" onclick="setDirection('Short', this)">▼ Short</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Symbol / Stock / Option</label>
+                        <input type="text" id="symbol" class="form-input" placeholder="e.g. NIFTY 24500 PE" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Entry Date</label>
+                            <input type="date" id="entryDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" id="qty" class="form-input" placeholder="600" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Entry Price (₹)</label>
+                            <input type="number" step="0.05" id="entryPrice" class="form-input" placeholder="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Exit Price (₹)</label>
+                            <input type="number" step="0.05" id="exitPrice" class="form-input" placeholder="120" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Stop Loss (₹)</label>
+                            <input type="number" step="0.05" id="slPrice" class="form-input" placeholder="90">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target (₹)</label>
+                            <input type="number" step="0.05" id="targetPrice" class="form-input" placeholder="130">
+                        </div>
+                    </div>
+
+                    <!-- Rules Followed Section -->
+                    <div class="form-group">
+                        <label class="form-label">Rules Followed</label>
+                        <div class="rules-container" id="activeRules"></div>
+                        <select class="form-select" onchange="addRuleTag(this.value); this.value='';">
+                            <option value="">Select or Add Rule...</option>
+                            <option value="avoid trading after 3 winning streak">avoid trading after 3 winning streak</option>
+                            <option value="book partial quantity on TP">book partial quantity on TP</option>
+                            <option value="fixed quantity (600 quantity in nifty)">fixed quantity (600 quantity in nifty)</option>
+                            <option value="5-10 points SL in nifty">5-10 points SL in nifty</option>
+                            <option value="Maximum 2 trade in a day">Maximum 2 trade in a day</option>
+                        </select>
+                    </div>
+
+                    <!-- Trade Analysis Notes -->
+                    <div class="form-group">
+                        <label class="form-label">Trade Analysis</label>
+                        <textarea id="tradeAnalysis" class="form-textarea" rows="2" placeholder="Why did you take this trade? What was your analysis?"></textarea>
+                    </div>
+
+                    <!-- Drag & Drop Screenshot Placeholder -->
+                    <div class="form-group">
+                        <label class="form-label">Trade Screenshot</label>
+                        <div class="upload-box">
+                            ☁️ Drag & drop your trade screenshot here<br>
+                            <span style="font-size: 10px; color: var(--text-sub);">Supports JPG, PNG (Max 5MB)</span>
+                        </div>
+                    </div>
+
+                    <!-- Psychology / Mistakes Mode -->
+                    <div class="form-group">
+                        <label class="form-label" style="color: var(--accent-purple);">Psychology & Mistakes Mode</label>
+                        <div class="checklist-grid">
+                            <label class="check-card"><input type="checkbox" value="Overtrading" class="mistake-cb"> Overtrading</label>
+                            <label class="check-card"><input type="checkbox" value="Revenge Trading" class="mistake-cb"> Revenge</label>
+                            <label class="check-card"><input type="checkbox" value="Risked Too Much" class="mistake-cb"> High Risk</label>
+                            <label class="check-card"><input type="checkbox" value="Exited Too Early" class="mistake-cb"> Early Exit</label>
+                            <label class="check-card"><input type="checkbox" value="FOMO Entry" class="mistake-cb"> FOMO</label>
+                            <label class="check-card" style="border-color: var(--green); color: var(--green);"><input type="checkbox" value="No Mistakes" id="noMistakesCb" checked class="mistake-cb"> No Mistakes</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Save Trade</button>
+                </form>
             </div>
         </div>
 
-        <!-- Inline Quick Psychology Log -->
-        <div class="card">
-            <div class="card-title">Psychology & Mistakes</div>
-            <div class="checklist-grid">
-                <label class="check-item"><input type="checkbox"> Overtrading</label>
-                <label class="check-item"><input type="checkbox"> Revenge Trading</label>
-                <label class="check-item"><input type="checkbox"> Risked Too Much</label>
-                <label class="check-item"><input type="checkbox"> Exited Too Early</label>
-                <label class="check-item"><input type="checkbox"> Exited Too Late</label>
-                <label class="check-item"><input type="checkbox"> FOMO Entry</label>
-                <label class="check-item"><input type="checkbox"> Ignored Stop Loss</label>
-                <label class="check-item" style="border-color:#10b981; color:#10b981;"><input type="checkbox" checked> No Mistakes</label>
+        <!-- Right Column: Dashboard & Saved History -->
+        <div>
+            <!-- Performance Chart -->
+            <div class="card">
+                <div class="card-header">Performance Curve</div>
+                <div style="height: 200px;">
+                    <canvas id="pnlChart"></canvas>
+                </div>
             </div>
-            <textarea rows="2" placeholder="What did you learn from this trade?"></textarea>
-            <button class="btn-primary" style="width: 100%;" onclick="showSuccess()">Save Trade Psychology</button>
+
+            <!-- Saved Trades Table -->
+            <div class="card">
+                <div class="card-header">Trade History</div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Symbol</th>
+                                <th>Type</th>
+                                <th>P&L (Net)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tradeTableBody">
+                            <!-- Rows will be injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <!-- Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <div class="success-icon">✓</div>
-            <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">Trade Saved Successfully!</h2>
-            <p style="font-size: 12px; color: #94a3b8; font-style: italic; margin-bottom: 20px;">"Pain is information. Capture it, study it, grow from it."</p>
-            
-            <div style="background: #182035; padding: 15px; border-radius: 12px; text-align: left; margin-bottom: 20px; font-size: 12px;">
-                <div style="color: #94a3b8; margin-bottom: 8px; font-weight: 600;">Comparison with Previous Day's P&L</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <div>Today's P&L: <strong class="text-green">+11,228.60</strong></div>
-                    <div>Yesterday: <strong class="text-green">+2,408.90</strong></div>
+    <!-- Success Popup Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-card">
+            <div class="success-badge">✓</div>
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 4px;">Trade Saved Successfully!</h2>
+            <p style="font-size: 11px; color: var(--text-sub); font-style: italic; margin-bottom: 20px;">"Pain is information. Capture it, study it, grow from it."</p>
+
+            <div style="background: #080c18; border: 1px solid var(--card-border); padding: 14px; border-radius: 12px; text-align: left; margin-bottom: 20px; font-size: 12px;">
+                <div style="color: var(--text-sub); font-weight: 600; margin-bottom: 8px;">Comparison with Previous Day's P&L</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <div>Today's P&L: <strong style="color: var(--green);" id="modalTodayPnl">+₹0.00</strong></div>
+                    <div>Yesterday: <strong style="color: var(--green);">+₹2,408.90</strong></div>
                 </div>
-                <div style="color: #818cf8;">↑ You saw an increase of <strong>8,819.70</strong> compared to last session!</div>
+                <div style="color: var(--accent-purple);" id="modalDiffText">↑ Positive session entry recorded!</div>
             </div>
 
-            <button class="btn-primary" style="width: 100%;" onclick="closeModal()">Keep Journaling</button>
+            <button class="btn-submit" onclick="closeModal()">Keep Journaling</button>
         </div>
     </div>
 
     <script>
-        function showSuccess() {
+        let currentMode = 'Intraday';
+        let currentDirection = 'Long';
+        let selectedRules = ['avoid trading after 3 winning streak'];
+        let tradesData = JSON.parse(localStorage.getItem('user_trades_data')) || [];
+        let pnlChart = null;
+
+        window.onload = function() {
+            document.getElementById('entryDate').valueAsDate = new Date();
+            renderRuleTags();
+            renderTable();
+            initChart();
+        };
+
+        function setTradeMode(mode, btn) {
+            currentMode = mode;
+            btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function setDirection(dir, btn) {
+            currentDirection = dir;
+            btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function addRuleTag(ruleText) {
+            if (ruleText && !selectedRules.includes(ruleText)) {
+                selectedRules.push(ruleText);
+                renderRuleTags();
+            }
+        }
+
+        function removeRuleTag(index) {
+            selectedRules.splice(index, 1);
+            renderRuleTags();
+        }
+
+        function renderRuleTags() {
+            const container = document.getElementById('activeRules');
+            container.innerHTML = selectedRules.map((rule, idx) => `
+                <div class="rule-tag">
+                    ${rule}
+                    <span onclick="removeRuleTag(${idx})">✕</span>
+                </div>
+            `).join('');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const symbol = document.getElementById('symbol').value;
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value);
+            const exitPrice = parseFloat(document.getElementById('exitPrice').value);
+            const qty = parseInt(document.getElementById('qty').value);
+            const entryDate = document.getElementById('entryDate').value;
+
+            let netPnl = currentDirection === 'Long' ? (exitPrice - entryPrice) * qty : (entryPrice - exitPrice) * qty;
+
+            const newTrade = {
+                id: Date.now(),
+                symbol, entryDate, qty, entryPrice, exitPrice, netPnl,
+                mode: currentMode, direction: currentDirection
+            };
+
+            tradesData.unshift(newTrade);
+            localStorage.setItem('user_trades_data', JSON.stringify(tradesData));
+
+            // Show Success Modal
+            document.getElementById('modalTodayPnl').innerText = `${netPnl >= 0 ? '+' : ''}₹${netPnl.toFixed(2)}`;
+            document.getElementById('modalTodayPnl').style.color = netPnl >= 0 ? 'var(--green)' : 'var(--red)';
             document.getElementById('successModal').style.display = 'flex';
+
+            renderTable();
+            updateChart();
+            document.getElementById('tradeForm').reset();
         }
-        function openModal() {
-            showSuccess();
-        }
+
         function closeModal() {
             document.getElementById('successModal').style.display = 'none';
         }
 
-        window.onload = function() {
-            const ctx = document.getElementById('equityChart').getContext('2d');
-            new Chart(ctx, {
+        function renderTable() {
+            const tbody = document.getElementById('tradeTableBody');
+            if (tradesData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-sub);">No trades logged yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = tradesData.map(t => `
+                <tr>
+                    <td style="color:var(--text-sub);">${t.entryDate}</td>
+                    <td style="font-weight:bold;">${t.symbol}</td>
+                    <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:#101a33; color:var(--accent-purple);">${t.direction} (${t.mode})</span></td>
+                    <td style="font-weight:bold; color: ${t.netPnl >= 0 ? 'var(--green)' : 'var(--red)'}">₹${t.netPnl.toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('pnlChart').getContext('2d');
+            pnlChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Thu 30', 'Fri 31', 'Sat 01', 'Sun 02', 'Mon 03', 'Tue 04', 'Today'],
+                    labels: ['Start', 'Today'],
                     datasets: [{
-                        label: 'P&L (₹)',
-                        data: [2400, 3100, 3100, 3100, 2408, 11228, 11228],
+                        label: 'P&L Cumulative',
+                        data: [0, 0],
                         borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                        fill: true,
-                        tension: 0.3
+                        backgroundColor: 'rgba(16,185,129,0.1)',
+                        fill: true, tension: 0.3
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-                        y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
+                        x: { grid: { color: '#1a233a' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: '#1a233a' }, ticks: { color: '#94a3b8' } }
                     }
                 }
             });
-        };
-    </script>
-</body>
-</html>
+            updateChart();
+        }
+
+        function updateChart() {
+            if (!pnlChart) return;
+            const reversed = [...tradesData].reverse();
+            let cumPnl = 0;
+            const labels = [];
+            const data = [];
+
+            reversed.forEach((t, idx) => {
+                cumPnl += t.netPnl;
+                labels.push(`Trade ${idx+1}`);
+                data.push(cumPnl);
+            });
+
+            if (data.length > 0) {
+  
