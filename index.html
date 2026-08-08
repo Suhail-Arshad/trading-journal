@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi" class="dark">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Diary - Professional Trading Journal</title>
+    <title>My Trade Diary Pro</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -16,7 +16,7 @@
             theme: {
                 extend: {
                     colors: {
-                        darkbg: '#060913',
+                        darkbg: '#070a13',
                         cardbg: '#0d1222',
                         sidebarbg: '#080c18',
                         bordercolor: '#1a233a',
@@ -27,217 +27,355 @@
         }
     </script>
     <style>
-        body { background-color: #060913; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: #070a13; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0d1222; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1a233a; border-radius: 4px; }
-        .nav-active { background-color: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); }
     </style>
 </head>
-<body class="bg-[#060913] text-slate-100 flex h-screen overflow-hidden">
+<body class="bg-[#070a13] text-slate-100 flex h-screen overflow-hidden">
 
     <!-- Left Navigation Sidebar -->
     <aside class="w-64 bg-[#080c18] border-r border-[#1a233a] flex flex-col justify-between hidden md:flex">
         <div>
-            <!-- Brand Logo -->
             <div class="p-5 flex items-center space-x-3 border-b border-[#1a233a]">
                 <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/30">
-                    T
+                    TD
                 </div>
                 <span class="text-xl font-bold text-white tracking-wide">Trade <span class="text-indigo-400">Diary</span></span>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="p-4 space-y-1 text-xs font-medium">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn nav-active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                    <span>Dashboard</span>
+            <nav class="p-4 space-y-1 text-xs font-semibold">
+                <button onclick="showTab('dashboard')" class="tab-btn active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 mb-1">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
                 </button>
-                <button onclick="switchTab('myTrades')" id="nav-myTrades" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
-                    <i data-lucide="book-open" class="w-4 h-4"></i>
-                    <span>My Trades & Journal</span>
+                <button onclick="showTab('addTrade')" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition mb-1">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Trade / Journal
                 </button>
-                <button onclick="switchTab('strategy')" id="nav-strategy" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
-                    <i data-lucide="layers" class="w-4 h-4"></i>
-                    <span>Strategy Backtest</span>
+                <button onclick="showTab('strategies')" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition mb-1">
+                    <i data-lucide="layers" class="w-4 h-4"></i> Strategy Backtest
                 </button>
-                <button onclick="switchTab('mistakes')" id="nav-mistakes" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
-                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                    <span>Mistake Analysis</span>
+                <button onclick="showTab('mistakes')" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition mb-1">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i> Mistake Tracker
                 </button>
-                <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
-                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
-                    <span>35+ Detailed Reports</span>
-                </button>
-                <button onclick="switchTab('ai')" id="nav-ai" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
-                    <i data-lucide="bot" class="w-4 h-4 text-amber-400"></i>
-                    <span>AI Summariser</span>
-                </button>
-                <button onclick="switchTab('calendar')" id="nav-calendar" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
-                    <i data-lucide="calendar" class="w-4 h-4"></i>
-                    <span>PnL Calendar</span>
+                <button onclick="showTab('calendar')" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition mb-1">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> P&L Calendar
                 </button>
             </nav>
         </div>
 
-        <!-- User Profile Bottom -->
-        <div class="p-4 border-t border-[#1a233a] flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs text-white">
-                    SK
-                </div>
-                <div class="text-xs">
+        <div class="p-4 border-t border-[#1a233a] flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white">SK</div>
+                <div>
                     <p class="font-bold text-white">Suhail Khan</p>
-                    <p class="text-slate-400 text-[10px]">Pro Trader</p>
+                    <p class="text-[10px] text-slate-400">Personal Journal</p>
                 </div>
             </div>
-            <i data-lucide="settings" class="w-4 h-4 text-slate-400 cursor-pointer hover:text-white"></i>
         </div>
     </aside>
 
-    <!-- Main Workspace -->
+    <!-- Main Content Workspace -->
     <main class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8">
-        
-        <!-- Header -->
-        <header class="flex items-center justify-between mb-8 pb-4 border-b border-[#1a233a]">
-            <div>
-                <h1 id="header-title" class="text-2xl font-bold text-white flex items-center gap-2">
-                    <i data-lucide="layout-dashboard" class="text-indigo-400"></i> Dashboard Overview
-                </h1>
-                <p id="header-subtitle" class="text-xs text-slate-400 mt-1">Track key metrics, win-rate, risk-reward & psychology insights.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="syncBroker()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-[#1a233a] text-indigo-300 text-xs font-semibold rounded-xl flex items-center gap-2 transition">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Sync Broker (Zerodha/Dhan)
-                </button>
-                <button onclick="switchTab('myTrades')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> + Log Trade
-                </button>
-            </div>
-        </header>
 
-        <!-- SECTION 1: DASHBOARD -->
-        <section id="sec-dashboard" class="tab-sec space-y-6">
+        <!-- TAB 1: DASHBOARD -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <div class="flex justify-between items-center border-b border-[#1a233a] pb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Trading Dashboard</h1>
+                    <p class="text-xs text-slate-400">Overview of your win rate, Risk-to-Reward, and overall P&L performance.</p>
+                </div>
+                <button onclick="showTab('addTrade')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                    + Log New Trade
+                </button>
+            </div>
+
+            <!-- KPI Summary Cards -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-4">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Total Win Rate</p>
-                    <p class="text-2xl font-bold text-emerald-400 mt-1">68.4%</p>
-                    <span class="text-[10px] text-slate-400">Based on last 30 sessions</span>
+                    <p class="text-slate-400 text-xs font-semibold">Total Net P&L</p>
+                    <p id="kpi-netPnl" class="text-2xl font-bold text-emerald-400 mt-1">₹0.00</p>
                 </div>
                 <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-4">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Avg Risk : Reward</p>
-                    <p class="text-2xl font-bold text-indigo-400 mt-1">1 : 2.45</p>
-                    <span class="text-[10px] text-slate-400">High expectancy ratio</span>
+                    <p class="text-slate-400 text-xs font-semibold">Win Rate %</p>
+                    <p id="kpi-winRate" class="text-2xl font-bold text-indigo-400 mt-1">0%</p>
                 </div>
                 <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-4">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Most Common Mistake</p>
-                    <p class="text-xl font-bold text-rose-400 mt-1">Risked Too Much</p>
-                    <span class="text-[10px] text-rose-400">Recorded in 4 trades</span>
+                    <p class="text-slate-400 text-xs font-semibold">Avg Risk/Reward</p>
+                    <p id="kpi-rr" class="text-2xl font-bold text-white mt-1">1 : 1.8</p>
                 </div>
                 <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-4">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Total Trades Logged</p>
-                    <p class="text-2xl font-bold text-white mt-1">128</p>
-                    <span class="text-[10px] text-emerald-400">100% disciplined journal</span>
+                    <p class="text-slate-400 text-xs font-semibold">Total Trades</p>
+                    <p id="kpi-totalTrades" class="text-2xl font-bold text-white mt-1">0</p>
                 </div>
             </div>
 
-            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-5">
-                <h3 class="text-sm font-bold text-white mb-4">Equity Curve Visualization</h3>
+            <!-- Equity Curve Chart -->
+            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-white mb-4">Equity Curve & Growth</h3>
                 <div class="h-64">
-                    <canvas id="dashChart"></canvas>
+                    <canvas id="dashboardEquityChart"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 2: MY TRADES JOURNAL -->
-        <section id="sec-myTrades" class="tab-sec space-y-6 hidden">
-            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
-                <h2 class="text-base font-bold text-white mb-4">Log New Trade</h2>
-                <form onsubmit="saveNewTrade(event)" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input type="text" id="tSymbol" placeholder="Symbol (e.g. NIFTY 24500 CE)" required class="bg-[#060913] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white">
-                        <input type="number" step="0.05" id="tEntry" placeholder="Entry Price (₹)" required class="bg-[#060913] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white">
-                        <input type="number" step="0.05" id="tExit" placeholder="Exit Price (₹)" required class="bg-[#060913] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white">
+        <!-- TAB 2: ADD TRADE / JOURNAL ENTRY -->
+        <section id="tab-addTrade" class="tab-content space-y-6 hidden">
+            <div class="border-b border-[#1a233a] pb-4">
+                <h1 class="text-2xl font-bold text-white">Log Trade Journal</h1>
+                <p class="text-xs text-slate-400">Capture entry, exit, stoploss, strategy, and psychology tags.</p>
+            </div>
+
+            <form id="tradeForm" onsubmit="saveTrade(event)" class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6 space-y-4 max-w-3xl">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Symbol / Instrument</label>
+                        <input type="text" id="symbol" placeholder="e.g. NIFTY 24500 CE" required class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input type="number" id="tQty" placeholder="Quantity" required class="bg-[#060913] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white">
-                        <select id="tStrategy" class="bg-[#060913] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Trade Date</label>
+                        <input type="date" id="tradeDate" required class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Entry Price (₹)</label>
+                        <input type="number" step="0.05" id="entryPrice" required placeholder="100" class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Exit Price (₹)</label>
+                        <input type="number" step="0.05" id="exitPrice" required placeholder="125" class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Quantity</label>
+                        <input type="number" id="qty" required placeholder="600" class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Strategy</label>
+                        <select id="strategy" class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                             <option value="Breakout">Breakout Strategy</option>
-                            <option value="Pullback">Pullback Strategy</option>
-                            <option value="VWAP Reversal">VWAP Reversal</option>
+                            <option value="Pullback">Pullback / Retracement</option>
+                            <option value="VWAP Rejection">VWAP Rejection</option>
+                            <option value="Support/Resistance">Support & Resistance</option>
                         </select>
-                        <select id="tMistake" class="bg-[#060913] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white">
-                            <option value="No Mistakes">No Mistakes</option>
-                            <option value="Risked Too Much">Risked Too Much</option>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Psychology / Mistake Tag</label>
+                        <select id="mistake" class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                            <option value="No Mistakes">No Mistakes (Disciplined Entry)</option>
                             <option value="FOMO Entry">FOMO Entry</option>
+                            <option value="Risked Too Much">Risked Too Much Capital</option>
+                            <option value="Revenge Trading">Revenge Trading</option>
                             <option value="Exited Too Early">Exited Too Early</option>
                         </select>
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold text-xs text-white rounded-xl">Save Journal Entry</button>
-                </form>
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Trade Notes / Analysis</label>
+                    <textarea id="notes" rows="2" placeholder="Why did you take this trade? What was the logic?" class="w-full bg-[#070a13] border border-[#1a233a] rounded-xl p-3 text-xs text-white focus:outline-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-600/30">
+                    Save Trade to Journal
+                </button>
+            </form>
+        </section>
+
+        <!-- TAB 3: STRATEGIES -->
+        <section id="tab-strategies" class="tab-content space-y-6 hidden">
+            <div class="border-b border-[#1a233a] pb-4">
+                <h1 class="text-2xl font-bold text-white">Strategy Backtest Performance</h1>
+                <p class="text-xs text-slate-400">Analyze which strategy brings maximum profits versus losses.</p>
+            </div>
+            <div id="strategyContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Injected via JS -->
             </div>
         </section>
 
-        <!-- SECTION 3: AI SUMMARISER -->
-        <section id="sec-ai" class="tab-sec space-y-6 hidden">
-            <div class="bg-[#0d1222] border border-amber-500/40 rounded-2xl p-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <i data-lucide="bot" class="w-6 h-6 text-amber-400"></i>
-                    <h2 class="text-lg font-bold text-white">AI Mentor Summary</h2>
-                </div>
-                <div class="space-y-4 text-xs text-slate-300 leading-relaxed bg-[#060913] p-4 rounded-xl border border-[#1a233a]">
-                    <p class="font-bold text-emerald-400">🌟 Strongest Performance Area:</p>
-                    <p>Aapki **Breakout Strategy** par win-rate 78% hai. Target tak hold karne ki accuracy achhi hai.</p>
+        <!-- TAB 4: MISTAKE TRACKER -->
+        <section id="tab-mistakes" class="tab-content space-y-6 hidden">
+            <div class="border-b border-[#1a233a] pb-4">
+                <h1 class="text-2xl font-bold text-white">Mistake Analysis & Cost</h1>
+                <p class="text-xs text-slate-400">Track psychological errors and capital lost due to indiscipline.</p>
+            </div>
+            <div id="mistakeContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Injected via JS -->
+            </div>
+        </section>
 
-                    <p class="font-bold text-rose-400 mt-2">⚠️ Weakness & Action Required:</p>
-                    <p>Thursday (Expiry Day) ko aapka win rate गिरकर 50% ho jata hai kyunki aap Pullback setups par revenge trading karte ho.</p>
-
-                    <p class="font-bold text-indigo-400 mt-2">💡 Next Actionable Step:</p>
-                    <p>Thursday ko apni position size ko 50% kam karein aur strictly max 2 trades ki limit dekhein.</p>
-                </div>
+        <!-- TAB 5: CALENDAR -->
+        <section id="tab-calendar" class="tab-content space-y-6 hidden">
+            <div class="border-b border-[#1a233a] pb-4">
+                <h1 class="text-2xl font-bold text-white">P&L Calendar View</h1>
+                <p class="text-xs text-slate-400">Green and Red session overview of your trading days.</p>
+            </div>
+            <div id="calendarGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                <!-- Injected via JS -->
             </div>
         </section>
 
     </main>
 
     <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-sec').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active'));
-
-            document.getElementById('sec-' + tabId).classList.remove('hidden');
-            document.getElementById('nav-' + tabId).classList.add('nav-active');
-            lucide.createIcons();
-        }
-
-        function syncBroker() {
-            alert("Broker Sync: Zerodha / Dhan / Angel One integration is active!");
-        }
-
-        function saveNewTrade(e) {
-            e.preventDefault();
-            alert("Trade Journaled Successfully!");
-            document.getElementById('tSymbol').value = '';
-            switchTab('dashboard');
-        }
+        let trades = JSON.parse(localStorage.getItem('user_journal_trades')) || [];
+        let chartInstance = null;
 
         window.onload = function() {
             lucide.createIcons();
-            const ctx = document.getElementById('dashChart').getContext('2d');
-            new Chart(ctx, {
+            document.getElementById('tradeDate').valueAsDate = new Date();
+            renderDashboard();
+        };
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+            if (tabName === 'dashboard') renderDashboard();
+            if (tabName === 'strategies') renderStrategies();
+            if (tabName === 'mistakes') renderMistakes();
+            if (tabName === 'calendar') renderCalendar();
+        }
+
+        function saveTrade(e) {
+            e.preventDefault();
+            const symbol = document.getElementById('symbol').value;
+            const tradeDate = document.getElementById('tradeDate').value;
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value);
+            const exitPrice = parseFloat(document.getElementById('exitPrice').value);
+            const qty = parseInt(document.getElementById('qty').value);
+            const strategy = document.getElementById('strategy').value;
+            const mistake = document.getElementById('mistake').value;
+            const notes = document.getElementById('notes').value;
+
+            const pnl = (exitPrice - entryPrice) * qty;
+
+            const newTrade = {
+                id: Date.now(), symbol, tradeDate, entryPrice, exitPrice, qty, strategy, mistake, notes, pnl
+            };
+
+            trades.unshift(newTrade);
+            localStorage.setItem('user_journal_trades', JSON.stringify(trades));
+            document.getElementById('tradeForm').reset();
+            alert('Trade Saved Successfully!');
+            showTab('dashboard');
+        }
+
+        function renderDashboard() {
+            let totalPnl = 0, wins = 0;
+            trades.forEach(t => {
+                totalPnl += t.pnl;
+                if (t.pnl > 0) wins++;
+            });
+
+            document.getElementById('kpi-netPnl').innerText = `₹${totalPnl.toFixed(2)}`;
+            document.getElementById('kpi-netPnl').className = `text-2xl font-bold mt-1 ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+            document.getElementById('kpi-winRate').innerText = `${trades.length > 0 ? Math.round((wins / trades.length) * 100) : 0}%`;
+            document.getElementById('kpi-totalTrades').innerText = trades.length;
+
+            updateChart();
+        }
+
+        function renderStrategies() {
+            const container = document.getElementById('strategyContainer');
+            const stats = {};
+
+            trades.forEach(t => {
+                if (!stats[t.strategy]) stats[t.strategy] = { pnl: 0, count: 0 };
+                stats[t.strategy].pnl += t.pnl;
+                stats[t.strategy].count += 1;
+            });
+
+            if (Object.keys(stats).length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500">No strategy data logged yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = Object.entries(stats).map(([strat, data]) => `
+                <div class="bg-[#0d1222] border border-[#1a233a] p-5 rounded-2xl">
+                    <h3 class="font-bold text-white text-sm mb-1">${strat}</h3>
+                    <p class="text-xs text-slate-400 mb-3">${data.count} Trades Executed</p>
+                    <p class="text-xl font-bold ${data.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">₹${data.pnl.toFixed(2)}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderMistakes() {
+            const container = document.getElementById('mistakeContainer');
+            const mistakes = {};
+
+            trades.forEach(t => {
+                if (t.mistake !== 'No Mistakes') {
+                    if (!mistakes[t.mistake]) mistakes[t.mistake] = { count: 0, loss: 0 };
+                    mistakes[t.mistake].count += 1;
+                    if (t.pnl < 0) mistakes[t.mistake].loss += Math.abs(t.pnl);
+                }
+            });
+
+            if (Object.keys(mistakes).length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500">Great! No mistake records logged yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = Object.entries(mistakes).map(([mst, data]) => `
+                <div class="bg-[#0d1222] border border-rose-500/30 p-5 rounded-2xl">
+                    <h3 class="font-bold text-rose-400 text-sm mb-1">${mst}</h3>
+                    <p class="text-xs text-slate-400 mb-3">Occurred ${data.count} times</p>
+                    <p class="text-xl font-bold text-rose-400">-₹${data.loss.toFixed(2)}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendarGrid');
+            if (trades.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500">No daily logs yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = trades.map(t => `
+                <div class="bg-[#0d1222] border ${t.pnl >= 0 ? 'border-emerald-500/40' : 'border-rose-500/40'} p-3 rounded-xl text-center">
+                    <p class="text-[10px] text-slate-400">${t.tradeDate}</p>
+                    <p class="text-xs font-bold ${t.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'} mt-1">₹${t.pnl.toFixed(0)}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('dashboardEquityChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            const reversed = [...trades].reverse();
+            let cumPnl = 0;
+            const labels = [];
+            const data = [];
+
+            reversed.forEach((t, i) => {
+                cumPnl += t.pnl;
+                labels.push(`Trade ${i+1}`);
+                data.push(cumPnl);
+            });
+
+            chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    labels: labels.length > 0 ? labels : ['Start'],
                     datasets: [{
-                        label: 'Cumulative Equity',
-                        data: [10000, 18500, 16000, 28400],
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        fill: true, tension: 0.3
+                        label: 'Cumulative P&L',
+                        data: data.length > 0 ? data : [0],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { color: '#1a233a' }, ticks: { color: '#94a3b8' } },
@@ -245,7 +383,7 @@
                     }
                 }
             });
-        };
+        }
     </script>
 </body>
 </html>
