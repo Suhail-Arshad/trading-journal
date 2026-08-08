@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trade Diary Pro - Advanced Trading Journal</title>
-    <!-- Tailwind CSS -->
+    <title>Trade Diary Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
@@ -34,6 +31,7 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0d1222; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1a233a; border-radius: 4px; }
+        .sidebar-btn.active { background-color: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); }
     </style>
 </head>
 <body class="bg-[#060913] text-slate-100 flex h-screen overflow-hidden">
@@ -51,23 +49,23 @@
 
             <!-- Navigation Items -->
             <nav class="p-4 space-y-1 text-sm font-medium">
-                <button onclick="switchRoute('myTrades')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
+                <button onclick="navTo('myTrades', 'Trade Journal', 'Capture setup, execution, and psychology in one flow.')" id="nav-myTrades" class="sidebar-btn active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
                     <i data-lucide="book-open" class="w-4 h-4"></i>
                     <span>My Trades</span>
                 </button>
-                <button onclick="switchRoute('mistakes')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                <button onclick="navTo('mistakes', 'Mistake Analysis', 'Review cost of mistakes, trends and potential capital saved.')" id="nav-mistakes" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
                     <i data-lucide="alert-triangle" class="w-4 h-4"></i>
                     <span>Mistake Analysis</span>
                 </button>
-                <button onclick="switchRoute('risk')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                <button onclick="navTo('risk', 'Risk Management', 'Track average risk per trade, max drawdown and position sizing.')" id="nav-risk" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
                     <i data-lucide="shield-alert" class="w-4 h-4"></i>
                     <span>Risk Management</span>
                 </button>
-                <button onclick="switchRoute('nifty')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                <button onclick="navTo('nifty', 'Nifty Analysis', 'Live Index Spot, Option Chain Overview and Market Bias.')" id="nav-nifty" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
                     <i data-lucide="line-chart" class="w-4 h-4"></i>
                     <span>Nifty Analysis</span>
                 </button>
-                <button onclick="switchRoute('fii')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                <button onclick="navTo('fii', 'FII & DII Activity', 'Institutional Cash Flows, Net Buying/Selling Metrics.')" id="nav-fii" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white transition">
                     <i data-lucide="landmark" class="w-4 h-4"></i>
                     <span>FII & DII Activity</span>
                 </button>
@@ -92,13 +90,13 @@
     <!-- Main Workspace Area -->
     <main class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8">
 
-        <!-- Top Status Bar -->
+        <!-- Dynamic Header -->
         <header class="flex items-center justify-between mb-8 pb-4 border-b border-[#1a233a]">
             <div>
-                <h1 id="route-title" class="text-2xl font-bold text-white flex items-center gap-2">
+                <h1 id="page-head-title" class="text-2xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="book-open" class="text-indigo-400"></i> Trade Journal
                 </h1>
-                <p class="text-xs text-slate-400 mt-1">Capture setup, execution, and psychology in one flow.</p>
+                <p id="page-head-sub" class="text-xs text-slate-400 mt-1">Capture setup, execution, and psychology in one flow.</p>
             </div>
             <div class="flex items-center gap-3">
                 <span class="text-xs text-slate-400">No Trade Day</span>
@@ -106,10 +104,9 @@
             </div>
         </header>
 
-        <!-- ROUTE 1: MY TRADES (FULL JOURNAL FORM) -->
-        <section id="route-myTrades" class="route-content space-y-6">
+        <!-- SECTION 1: MY TRADES -->
+        <section id="sec-myTrades" class="page-sec">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
                 <!-- Left Form Column -->
                 <div class="lg:col-span-2 bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6 shadow-xl">
                     <form id="journalForm" onsubmit="saveTradeEntry(event)">
@@ -126,7 +123,6 @@
                             <button type="button" id="btnDirShort" onclick="setDirection('Short')" class="py-2 text-xs font-bold rounded-lg text-slate-400 transition">▼ Short</button>
                         </div>
 
-                        <!-- Symbol & Entry Date -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="text-xs font-semibold text-slate-400 block mb-1">Symbol / Stock</label>
@@ -138,7 +134,6 @@
                             </div>
                         </div>
 
-                        <!-- Prices & Qty -->
                         <div class="grid grid-cols-3 gap-3 mb-4">
                             <div>
                                 <label class="text-xs font-semibold text-slate-400 block mb-1">Entry Price (₹)</label>
@@ -154,7 +149,6 @@
                             </div>
                         </div>
 
-                        <!-- SL & Target -->
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="text-xs font-semibold text-slate-400 block mb-1">Stop Loss (₹)</label>
@@ -181,22 +175,12 @@
                             </select>
                         </div>
 
-                        <!-- Trade Analysis Text -->
                         <div class="mb-4">
                             <label class="text-xs font-semibold text-slate-400 block mb-1">Trade Analysis</label>
                             <textarea id="inpAnalysis" rows="2" placeholder="Why did you take this trade? What was your analysis?" class="w-full bg-[#060913] border border-[#1a233a] rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
                         </div>
 
-                        <!-- Trade Screenshots Drag & Drop Area -->
-                        <div class="mb-6">
-                            <label class="text-xs font-semibold text-slate-400 block mb-1">Trade Screenshots</label>
-                            <div class="border-2 border-dashed border-[#1a233a] bg-[#060913] rounded-xl p-6 text-center text-xs text-slate-400 cursor-pointer hover:border-indigo-500 transition">
-                                ☁️ Drag & drop your trade screenshot here<br>
-                                <span class="text-[10px] text-slate-500">Supports JPG, PNG (Max 5MB each, 10 files max)</span>
-                            </div>
-                        </div>
-
-                        <!-- Psychology Checklist Grid -->
+                        <!-- Psychology Checklist -->
                         <div class="mb-6">
                             <label class="text-xs font-bold text-indigo-400 uppercase tracking-wider block mb-3">Psychology & Mistakes Mode</label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
@@ -235,7 +219,7 @@
                     </form>
                 </div>
 
-                <!-- Right Column: Equity & Trade History -->
+                <!-- Right Column: Equity Chart & History -->
                 <div class="space-y-6">
                     <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-5">
                         <h3 class="text-sm font-bold text-white mb-4">Equity Curve (P&L Trend)</h3>
@@ -266,9 +250,9 @@
             </div>
         </section>
 
-        <!-- ROUTE 2: MISTAKE ANALYSIS -->
-        <section id="route-mistakes" class="route-content space-y-6 hidden">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- SECTION 2: MISTAKE ANALYSIS -->
+        <section id="sec-mistakes" class="page-sec hidden">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-5">
                     <p class="text-xs text-slate-400 uppercase font-semibold">Total Mistakes This Month</p>
                     <p class="text-3xl font-bold text-white mt-2">2</p>
@@ -290,11 +274,15 @@
                     <p class="text-xs text-slate-400 mt-2">By avoiding early entry</p>
                 </div>
             </div>
+            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-white mb-4">Mistake Trend History</h3>
+                <p class="text-xs text-slate-400">Mistake frequency graph active for current month session.</p>
+            </div>
         </section>
 
-         <!-- ROUTE 3: RISK MANAGEMENT -->
-        <section id="route-risk" class="route-content space-y-6 hidden">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- SECTION 3: RISK MANAGEMENT -->
+        <section id="sec-risk" class="page-sec hidden">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-4">
                     <p class="text-slate-400 text-xs font-semibold uppercase">Avg Risk / Trade</p>
                     <p class="text-xl font-bold text-white mt-1">₹6,051.30</p>
@@ -312,11 +300,15 @@
                     <p class="text-xl font-bold text-rose-400 mt-1">₹14,915</p>
                 </div>
             </div>
+            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-white mb-2">Risk Taken vs Profit Achieved</h3>
+                <p class="text-xs text-slate-400">R:R Metrics and Daily Risk Allocation Matrix.</p>
+            </div>
         </section>
 
-        <!-- ROUTE 4: NIFTY ANALYSIS -->
-        <section id="route-nifty" class="route-content space-y-6 hidden">
-            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
+        <!-- SECTION 4: NIFTY ANALYSIS -->
+        <section id="sec-nifty" class="page-sec hidden">
+            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6 mb-6">
                 <span class="text-xs font-bold text-slate-400 uppercase">INDEX • NSE</span>
                 <h2 class="text-3xl font-extrabold text-white mt-1">NIFTY 50 SPOT</h2>
                 <div class="flex items-center space-x-3 mt-2">
@@ -324,14 +316,27 @@
                     <span class="text-sm text-rose-400 bg-rose-950/80 px-2.5 py-1 rounded-lg border border-rose-800/50">-254.10 (-1.03%)</span>
                 </div>
             </div>
+            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-white mb-2">Trend Analysis & OI Compass</h3>
+                <p class="text-xs text-slate-400">Live Option Chain analysis for Nifty Index.</p>
+            </div>
         </section>
 
-        <!-- ROUTE 5: FII & DII -->
-        <section id="route-fii" class="route-content space-y-6 hidden">
-            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6">
+        <!-- SECTION 5: FII & DII ACTIVITY -->
+        <section id="sec-fii" class="page-sec hidden">
+            <div class="bg-[#0d1222] border border-[#1a233a] rounded-2xl p-6 mb-6">
                 <span class="text-xs text-slate-400 uppercase font-semibold">Institutional Flows • Cash Segment</span>
                 <h2 class="text-2xl font-bold text-white mt-1">FII & DII Activity</h2>
-                <p class="text-3xl font-extrabold text-emerald-400 mt-4">+922.26 Cr (FII Foreign Buyer)</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-[#060913] p-4 rounded-xl border border-[#1a233a]">
+                        <p class="text-xs text-slate-400">FII Net Buyer</p>
+                        <p class="text-2xl font-extrabold text-emerald-400 mt-1">+922.26 Cr</p>
+                    </div>
+                    <div class="bg-[#060913] p-4 rounded-xl border border-[#1a233a]">
+                        <p class="text-xs text-slate-400">Session Net Total</p>
+                        <p class="text-2xl font-extrabold text-emerald-400 mt-1">+2,493.44 Cr</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -361,7 +366,7 @@
                 </div>
                 <div class="flex items-center text-xs text-indigo-300">
                     <i data-lucide="arrow-up" class="w-4 h-4 mr-1 text-emerald-400"></i>
-                    <span id="modalPnlDiff">You saw an increase in your P&L compared to last session!</span>
+                    <span>You saw an increase in your P&L compared to last session!</span>
                 </div>
             </div>
 
@@ -386,9 +391,22 @@
             initEquityChart();
         };
 
-        function switchRoute(routeName) {
-            document.querySelectorAll('.route-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('route-' + routeName).classList.remove('hidden');
+        // NAVIGATION SWITCHER (FIXED)
+        function navTo(secId, titleText, subText) {
+            // Hide all sections
+            document.querySelectorAll('.page-sec').forEach(el => el.classList.add('hidden'));
+            // Remove active style from buttons
+            document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById('sec-' + secId).classList.remove('hidden');
+            // Highlight button
+            document.getElementById('nav-' + secId).classList.add('active');
+
+            // Update Header Title & Subtitle
+            document.getElementById('page-head-title').innerHTML = `<i data-lucide="book-open" class="text-indigo-400"></i> ${titleText}`;
+            document.getElementById('page-head-sub').innerText = subText;
+            lucide.createIcons();
         }
 
         function setMode(selectedMode) {
